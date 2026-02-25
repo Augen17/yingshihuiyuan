@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>影视会员VIP视频工具 - 专业版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #3f51b5;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        .parser-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #3f51b5;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            margin: 20px auto;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #303f9f;
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .platform-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .platform-title {
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .platform-btn {
+            background-color: #f0f0f0;
+            color: #333;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .platform-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .platform-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+
+
+
+
+    <header>
+        <h1>影视VIP会员观看工具</h1>
+    </header>
+
+    <div class="container">
+        <div class="parser-section">
+            <div class="form-group">
+                <label for="api-select">选择解析接口:</label>
+                <select id="api-select">
+                    <option value="https://jx.xmflv.cc/?url=">超清 腾讯视频不带弹幕</option>
+                    <option value="https://jx.playerjy.com/?url==">超清全网 腾讯爱奇艺优酷芒果 高级</option>
+
+                    <option value="https://im1907.top/?url=">点击自定义搜索片名</option>
+                    <option value="hhttps://jx.m3u8.tv/jiexi/?url=">腾讯视频带弹幕</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="url-input">输入视频链接:</label>
+                <input type="text" id="url-input" placeholder="请输入需要解析的视频链接">
+            </div>
+
+            <button id="parse-btn">解析并播放</button>
+
+            <div class="status" id="status">准备就绪</div>
+        </div>
+
+        <div class="platform-section">
+            <h2 class="platform-title">热门视频平台</h2>
+            <div class="platform-grid" id="platform-grid">
+                <!-- 平台按钮将通过JavaScript动态生成 -->
+            </div>
+        </div>
+
+        <footer>
+            © 周凡 2025 高级视频解析工具
+        </footer>
+    </div>
+
+    <script>
+        // 平台数据
+        const platforms = [
+            {name: "腾讯视频", url: "https://v.qq.com"},
+            {name: "爱奇艺", url: "https://www.iqiyi.com"},
+            {name: "优酷", url: "https://www.youku.com"},
+            {name: "芒果TV", url: "https://www.mgtv.com"},
+            {name: "哔哩哔哩", url: "https://www.bilibili.com"},
+            {name: "搜狐视频", url: "https://tv.sohu.com"},
+            {name: "PPTV", url: "https://www.pptv.com"},
+            {name: "1905电影网", url: "https://www.1905.com"}
+        ];
+
+        // 获取DOM元素
+        const apiSelect = document.getElementById('api-select');
+        const urlInput = document.getElementById('url-input');
+        const parseBtn = document.getElementById('parse-btn');
+        const statusEl = document.getElementById('status');
+        const platformGrid = document.getElementById('platform-grid');
+
+        // 生成平台按钮
+        platforms.forEach(platform => {
+            const btn = document.createElement('button');
+            btn.className = 'platform-btn';
+            btn.textContent = platform.name;
+            btn.addEventListener('click', () => {
+                window.open(platform.url, '_blank');
+            });
+            platformGrid.appendChild(btn);
+        });
+
+        // 解析视频
+        parseBtn.addEventListener('click', () => {
+            const videoUrl = urlInput.value.trim();
+            const apiUrl = apiSelect.value;
+
+            if (!videoUrl) {
+                statusEl.textContent = '请输入视频链接';
+                statusEl.style.color = 'red';
+                return;
+            }
+
+            if (!videoUrl.startsWith('http://') && !videoUrl.startsWith('https://')) {
+                statusEl.textContent = '请输入有效的URL链接';
+                statusEl.style.color = 'red';
+                return;
+            }
+
+            statusEl.textContent = '正在解析中...';
+            statusEl.style.color = '#3f51b5';
+
+            try {
+                const fullUrl = apiUrl + encodeURIComponent(videoUrl);
+                window.open(fullUrl, '_blank');
+
+                statusEl.textContent = '视频解析成功!';
+                statusEl.style.color = 'green';
+            } catch (error) {
+                statusEl.textContent = `解析出错: ${error.message}`;
+                statusEl.style.color = 'red';
+            }
+        });
+    </script>
+
+
+
+
+</body>
+</html>
